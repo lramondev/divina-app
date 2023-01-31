@@ -20,16 +20,13 @@ class ChatModule extends Module {
   @override
   final List<Bind> binds = [
     Bind.lazySingleton((i) => ChatStore()),
-    Bind.lazySingleton((i) => ChatMessageStore()),
-    Bind.lazySingleton((i) => ChatUserStore())
+    //Bind.lazySingleton((i) => ChatMessageStore()),
+    //Bind.lazySingleton((i) => ChatUserStore())
   ];
 
   @override
   final List<ModularRoute> routes = [
-    ChildRoute(
-      Modular.initialRoute,
-      child: (_, args) => ChatPage(),
-    ),
+    ChildRoute(Modular.initialRoute, child: (_, args) => ChatPage()),
     ChildRoute('/message/', child: (_, args) => MessagePage()),
     ChildRoute('/user/', child: (_, args) => UserPage()),
   ];

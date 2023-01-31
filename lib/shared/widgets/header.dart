@@ -16,12 +16,9 @@ class HeaderWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            height: 48,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text('Exibindo: ${from ?? 0} - ${to ?? 0} / ${total ?? 0}', style: const TextStyle(fontSize: 18))
-            ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Text('Exibindo: ${from ?? 0} - ${to ?? 0} / ${total ?? 0}', style: const TextStyle(fontSize: 18)),
           )
         ],
       )

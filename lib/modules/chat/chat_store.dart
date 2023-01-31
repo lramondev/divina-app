@@ -1,10 +1,11 @@
-
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+import 'package:divina/network/endpoints.dart';
 
 import 'package:divina/modules/chat/repositories/chat_repository.dart';
 import 'package:divina/modules/chat/repositories/chat_user_repository.dart';
@@ -22,7 +23,15 @@ class ChatStore = ChatStoreBase with _$ChatStore;
 
 abstract class ChatStoreBase with Store {
 
-  late TabController tabController;
+  ChatStoreBase() {
+    socket.onConnect((_) => print('socket connect'));
+    socket.onDisconnect((_) => { users = [], print('socket disconnect') });
+    socket.on('users', (chatUsers) => setChatUsers(chatUsers));
+    connect();
+  }
+
+  IO.Socket socket = IO.io('${Endpoints.socketUrl}chat', IO.OptionBuilder().setTransports(['websocket']).disableAutoConnect().build());
+
   ChatRepository chatRepository = ChatRepository();
   ChatUserRepository chatUserRepository = ChatUserRepository();
 
@@ -52,14 +61,37 @@ abstract class ChatStoreBase with Store {
   @observable
   List<User> users = [];
 
+  @observable
+  List<User> chatUsers = [];
+
+  @action
+  void setChatUsers(dynamic newChatUsers) {
+    chatUsers = User.fromJsonList(newChatUsers);
+    print(chatUsers.length);
+  }
+
+  @action
+  void toggle() {
+    chatUsers = User.fromJsonList(jsonDecode(jsonEncode(chatUsers)));
+  }
+
+  @action
+  void connect() {
+    socket.io.options['query'] = { 'user': jsonEncode(appStore.user) };
+    socket.connect();
+  }
+
+  @action
+  void disconnect() {
+    socket.io.options['query'] = { 'user': null };
+    socket.disconnect();
+  }
+
   @action
   Future<List<Chat>> list() async {
     try {
       isFetchError = false;
       isLoading = true;
-
-      print(appStore.user);
-
       var c = await chatRepository.list(appStore.user, apiRequest.text);
       chats = c.where((element) => element.chat_group == null).toList();
       groupChats = c.where((element) => element.chat_group != null).toList();

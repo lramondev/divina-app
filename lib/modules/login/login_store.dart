@@ -72,12 +72,7 @@ abstract class _LoginStoreBase with Store {
     try {
       isLoading = true;
       var response = await loginRepository.login(email, password);
-      appStore.setUser(User.fromJson(response.data[0]['data']));
-
-      //await storage.setItem('email', isRememberMe ? email : '');
-      //await storage.setItem('password', isRememberMe ? password : '');
-      //await storage.setItem('user', jsonEncode(user));
-
+      appStore.login(User.fromJson(response.data[0]['data']));
       isLoading = false;
       return RepositoryResponse.fromJsonList(response.data);
     } on DioError catch(exception) {

@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:divina/network/endpoints.dart';
 
@@ -19,19 +19,13 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin {
 
+  late TabController tabController = TabController(vsync: this, length: 2);
   ChatStore chatStore = Modular.get<ChatStore>();
 
   @override
   void initState() {
     super.initState();
-    chatStore.tabController = TabController(vsync: this, length: 2);
     chatStore.list();
-  }
-
-  @override
-  void dispose() {
-    chatStore.tabController.dispose();
-    super.dispose();
   }
 
   @override
@@ -48,25 +42,23 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
         ),
         child: Observer(
           builder: (context) {
+            print('observer');
+
             return Scaffold(
               extendBody: true,
               extendBodyBehindAppBar: true,
               floatingActionButton: FloatingActionButton(
-                onPressed: () => Modular.to.pushNamed('/chat/user/'),
+                onPressed: () => chatStore.toggle(),//Modular.to.pushNamed('/chat/user/'),
                 child: const Icon(Icons.add, color: Colors.white),
               ),
               appBar: AppBar(
                 titleSpacing: 0,
-                title: const Padding(
-                  padding: EdgeInsets.only(left: 16),
-                  child: Opacity(
-                    opacity: .6,
-                    child: Text('Messenger', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold))
-                  ),
+                title: const Opacity(
+                  opacity: .6,
+                  child: Text('Messenger', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold))
                 ),
-                automaticallyImplyLeading: false,
                 bottom: TabBar(
-                  controller: chatStore.tabController,
+                  controller: tabController,
                   tabs: const [
                     Tab(
                       child: Text('Chats', style: TextStyle(fontSize: 18))
@@ -78,7 +70,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                 )
               ),
               body: TabBarView(
-                controller: chatStore.tabController,
+                controller: tabController,
                 children: [
                   SizedBox(
                     height: MediaQuery.of(context).size.height,
@@ -86,6 +78,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                       padding: const EdgeInsets.only(top: 16, bottom: 16),
                       child: ListWidget(
                         data: chatStore.chats,
+                        status: (int index) => chatStore.chatUsers.where((element) => element.id == chatStore.chats[index].to?.id).isNotEmpty ? 1 : 0,
                         leading: (int index) => CachedNetworkImageProvider('${Endpoints.baseUrl}${chatStore.chats[index].to?.avatar_url}'),
                         isLoading: chatStore.isLoading,
                         isFetchError: chatStore.isFetchError,
@@ -103,6 +96,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                       padding: const EdgeInsets.only(top: 16, bottom: 16),
                       child: ListWidget(
                         data: chatStore.groupChats,
+                        status: (int index) => 0,
                         leading: (int index) => CachedNetworkImageProvider('${Endpoints.baseUrl}${chatStore.groupChats[index].chat_group?.avatar_url}'),
                         isLoading: chatStore.isLoading,
                         isFetchError: chatStore.isFetchError,

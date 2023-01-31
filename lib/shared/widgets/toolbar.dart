@@ -57,6 +57,7 @@ class ToolBar extends StatelessWidget with PreferredSizeWidget {
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.only(top: 18),
                   hintText: 'Digite para pesquisar',
+                  hintStyle: const TextStyle(fontSize: 16),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () {

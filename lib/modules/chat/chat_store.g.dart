@@ -135,12 +135,75 @@ mixin _$ChatStore on ChatStoreBase, Store {
     });
   }
 
+  late final _$chatUsersAtom =
+      Atom(name: 'ChatStoreBase.chatUsers', context: context);
+
+  @override
+  List<User> get chatUsers {
+    _$chatUsersAtom.reportRead();
+    return super.chatUsers;
+  }
+
+  @override
+  set chatUsers(List<User> value) {
+    _$chatUsersAtom.reportWrite(value, super.chatUsers, () {
+      super.chatUsers = value;
+    });
+  }
+
   late final _$listAsyncAction =
       AsyncAction('ChatStoreBase.list', context: context);
 
   @override
   Future<List<Chat>> list() {
     return _$listAsyncAction.run(() => super.list());
+  }
+
+  late final _$ChatStoreBaseActionController =
+      ActionController(name: 'ChatStoreBase', context: context);
+
+  @override
+  void setChatUsers(dynamic newChatUsers) {
+    final _$actionInfo = _$ChatStoreBaseActionController.startAction(
+        name: 'ChatStoreBase.setChatUsers');
+    try {
+      return super.setChatUsers(newChatUsers);
+    } finally {
+      _$ChatStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void toggle() {
+    final _$actionInfo = _$ChatStoreBaseActionController.startAction(
+        name: 'ChatStoreBase.toggle');
+    try {
+      return super.toggle();
+    } finally {
+      _$ChatStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void connect() {
+    final _$actionInfo = _$ChatStoreBaseActionController.startAction(
+        name: 'ChatStoreBase.connect');
+    try {
+      return super.connect();
+    } finally {
+      _$ChatStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void disconnect() {
+    final _$actionInfo = _$ChatStoreBaseActionController.startAction(
+        name: 'ChatStoreBase.disconnect');
+    try {
+      return super.disconnect();
+    } finally {
+      _$ChatStoreBaseActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
@@ -153,7 +216,8 @@ isSearching: ${isSearching},
 isFetchError: ${isFetchError},
 chats: ${chats},
 groupChats: ${groupChats},
-users: ${users}
+users: ${users},
+chatUsers: ${chatUsers}
     ''';
   }
 }

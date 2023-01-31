@@ -93,6 +93,7 @@ abstract class NfseStoreBase with Store {
     }
   }
 
+  @action
   void back() {
     if(apiResponse.current_page > 1) {
       apiRequest.page--;

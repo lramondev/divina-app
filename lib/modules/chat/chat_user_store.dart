@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 
-import 'package:divina/modules/chat/repositories/chat_user_repository.dart';
 import 'package:divina/modules/app/app_store.dart';
+
+import 'package:divina/modules/chat/repositories/chat_user_repository.dart';
 
 import 'package:divina/shared/models/api_request_model.dart';
 import 'package:divina/shared/models/api_response_model.dart';
@@ -18,10 +19,9 @@ part 'chat_user_store.g.dart';
 class ChatUserStore = ChatUserStoreBase with _$ChatUserStore;
 
 abstract class ChatUserStoreBase with Store {
-  ChatUserRepository chatUserRepository = ChatUserRepository();
 
   late TabController tabController;
-
+  ChatUserRepository chatUserRepository = ChatUserRepository();
   AppStore appStore = Modular.get<AppStore>();
 
   @observable

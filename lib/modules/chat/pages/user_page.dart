@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:divina/network/endpoints.dart';
 
@@ -17,6 +18,7 @@ class UserPage extends StatefulWidget {
   State<UserPage> createState() => _UserPageState();
 }
 
+// ABSTRAIDO EM SHARED //*********************************************************************************************** */
 class Debouncer {
    Debouncer({required this.milliseconds});
    final int milliseconds;
@@ -83,8 +85,9 @@ class _UserPageState extends State<UserPage> with SingleTickerProviderStateMixin
                           },
                           style: const TextStyle(fontSize: 20),
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.only(top: 18),
+                            contentPadding: const EdgeInsets.only(top: 16),
                             hintText: 'Digite para pesquisar',
+                            hintStyle: const TextStyle(fontSize: 16),
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.close),
                               onPressed: () {
@@ -112,13 +115,14 @@ class _UserPageState extends State<UserPage> with SingleTickerProviderStateMixin
                 ],
               ),
               body: ListWidget(
-                data: chatUserStore.users,
-                leading: (int index) => NetworkImage('${Endpoints.baseUrl}${chatUserStore.users[index].avatar_url}'),
                 isLoading: chatUserStore.isLoading,
                 isFetchError: chatUserStore.isFetchError,
-                onTap: (int index) => {},
+                data: chatUserStore.users,
+                status: (int index) => 0,
+                leading: (int index) => CachedNetworkImageProvider('${Endpoints.baseUrl}${chatUserStore.users[index].avatar_url}'),
                 onPressed: () => {},
                 onRefresh: () => chatUserStore.list(),
+                onTap: (int index) => {},
                 title: (index) => chatUserStore.users[index].name,
                 subtitle: (index) => chatUserStore.users[index].email
               )

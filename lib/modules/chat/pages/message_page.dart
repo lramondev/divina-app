@@ -81,15 +81,10 @@ class _MessagePageState extends State<MessagePage> {
                         padding: const EdgeInsets.only(left: 8, right: 4),
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width - 72,
-                          child: TextField(
+                          child: const TextField(
                             decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.blueAccent,
                               hintText: 'Digite para conversar',
-                              contentPadding: const EdgeInsets.all(2),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(32),
-                              )
+                              contentPadding: EdgeInsets.all(2)
                             ),
                           ),
                         ),

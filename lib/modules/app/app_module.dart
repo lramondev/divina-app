@@ -15,12 +15,12 @@ class AppModule extends Module {
 
   @override
   List<Module> get imports => [
-    CoreModule(),
+    CoreModule()
   ];
 
   @override
   final List<Bind> binds = [
-    Bind.lazySingleton((i) => AppStore()),
+    Bind.lazySingleton((i) => AppStore())
   ];
 
   @override

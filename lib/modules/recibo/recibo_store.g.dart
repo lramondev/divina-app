@@ -168,6 +168,17 @@ mixin _$ReciboStore on ReciboStoreBase, Store {
   }
 
   @override
+  void back() {
+    final _$actionInfo = _$ReciboStoreBaseActionController.startAction(
+        name: 'ReciboStoreBase.back');
+    try {
+      return super.back();
+    } finally {
+      _$ReciboStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 apiResponse: ${apiResponse},

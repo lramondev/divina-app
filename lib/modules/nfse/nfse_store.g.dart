@@ -168,6 +168,17 @@ mixin _$NfseStore on NfseStoreBase, Store {
   }
 
   @override
+  void back() {
+    final _$actionInfo =
+        _$NfseStoreBaseActionController.startAction(name: 'NfseStoreBase.back');
+    try {
+      return super.back();
+    } finally {
+      _$NfseStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 apiResponse: ${apiResponse},

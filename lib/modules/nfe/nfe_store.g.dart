@@ -168,6 +168,17 @@ mixin _$NfeStore on NfeStoreBase, Store {
   }
 
   @override
+  void back() {
+    final _$actionInfo =
+        _$NfeStoreBaseActionController.startAction(name: 'NfeStoreBase.back');
+    try {
+      return super.back();
+    } finally {
+      _$NfeStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 apiResponse: ${apiResponse},
