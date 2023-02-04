@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class ListWidget extends StatelessWidget {
 
@@ -55,48 +56,52 @@ class ListWidget extends StatelessWidget {
           ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () async => onTap(index),
-                /*customBorder: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),*/
-                child: Card(
-                  color: Colors.transparent,
-                  margin: EdgeInsets.zero,
-                  elevation: 0,
-                  /*shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)
-                  ),*/
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        leading: Stack(
-                          children: [
-                            CircleAvatar(backgroundImage: leading(index), radius: 28),
-                            Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                  width: 1,
-                                  color: Colors.white
-                                ),
-                                borderRadius: BorderRadius.circular(90),
-                                color: status(index) == 0 ? Colors.grey : status(index) == 1 ? Colors.green : Colors.amber
+              return Observer(
+                builder: (_) {
+                  return InkWell(
+                    onTap: () async => onTap(index),
+                    /*customBorder: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),*/
+                    child: Card(
+                      color: Colors.transparent,
+                      margin: EdgeInsets.zero,
+                      elevation: 0,
+                      /*shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)
+                      ),*/
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: Stack(
+                              children: [
+                                CircleAvatar(backgroundImage: leading(index), radius: 28),
+                                Positioned(
+                                  right: 0,
+                                  bottom: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                      width: 1,
+                                      color: status(index) == 0 ? Colors.white30 : status(index) == 1 ? Colors.green : Colors.amber
+                                    ),
+                                    borderRadius: BorderRadius.circular(90),
+                                    color: status(index) == 0 ? Colors.grey : status(index) == 1 ? Colors.greenAccent : Colors.amberAccent
+                                    )
+                                  )
                                 )
-                              )
-                            )
-                          ]
-                        ),
-                        title: Text(title(index).toString(), overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 18)),
-                        subtitle: Text(subtitle(index) != null ? subtitle(index).toString() : '', overflow: TextOverflow.ellipsis),
-                      )
-                    ],
-                  ),
-                ),
+                              ]
+                            ),
+                            title: Text(title(index).toString(), overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 18)),
+                            subtitle: Text(subtitle(index) != null ? subtitle(index).toString() : '', overflow: TextOverflow.ellipsis),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }
               );
             }
           )

@@ -9,6 +9,7 @@ import 'package:divina/network/endpoints.dart';
 
 import 'package:divina/modules/chat/widgets/list.dart';
 
+import 'package:divina/modules/chat/chat_store.dart';
 import 'package:divina/modules/chat/chat_user_store.dart';
 
 class UserPage extends StatefulWidget {
@@ -31,6 +32,7 @@ class Debouncer {
 
 class _UserPageState extends State<UserPage> with SingleTickerProviderStateMixin {
 
+  ChatStore chatStore = Modular.get<ChatStore>();
   ChatUserStore chatUserStore = Modular.get<ChatUserStore>();
 
   final _focusNode = FocusNode();
@@ -55,10 +57,14 @@ class _UserPageState extends State<UserPage> with SingleTickerProviderStateMixin
         return true;
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light.copyWith(
+        value: Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light.copyWith(
           statusBarColor: Colors.transparent,
           systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
-          systemNavigationBarIconBrightness: Theme.of(context).brightness == Brightness.dark ? Brightness.light : Brightness.dark
+          systemNavigationBarIconBrightness: Brightness.light
+        ) : SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
+          systemNavigationBarIconBrightness: Brightness.dark
         ),
         child: Observer(
           builder: (context) {
@@ -118,7 +124,7 @@ class _UserPageState extends State<UserPage> with SingleTickerProviderStateMixin
                 isLoading: chatUserStore.isLoading,
                 isFetchError: chatUserStore.isFetchError,
                 data: chatUserStore.users,
-                status: (int index) => 0,
+                status: (int index) => chatStore.users.where((element) => element.id == chatUserStore.users[index].id).isNotEmpty ? 1 : 0,
                 leading: (int index) => CachedNetworkImageProvider('${Endpoints.baseUrl}${chatUserStore.users[index].avatar_url}'),
                 onPressed: () => {},
                 onRefresh: () => chatUserStore.list(),

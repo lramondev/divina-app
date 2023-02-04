@@ -20,8 +20,8 @@ class ChatModule extends Module {
   @override
   final List<Bind> binds = [
     Bind.lazySingleton((i) => ChatStore()),
-    //Bind.lazySingleton((i) => ChatMessageStore()),
-    //Bind.lazySingleton((i) => ChatUserStore())
+    Bind.lazySingleton((i) => ChatMessageStore()),
+    Bind.lazySingleton((i) => ChatUserStore())
   ];
 
   @override

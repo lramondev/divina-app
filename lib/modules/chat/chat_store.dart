@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -23,19 +24,30 @@ class ChatStore = ChatStoreBase with _$ChatStore;
 
 abstract class ChatStoreBase with Store {
 
+  AppStore appStore = Modular.get<AppStore>();
+  ChatRepository chatRepository = ChatRepository();
+  ChatUserRepository chatUserRepository = ChatUserRepository();
+  IO.Socket socket = IO.io('${Endpoints.socketUrl}chat', IO.OptionBuilder().setTransports(['websocket']).disableAutoConnect().build());
+
   ChatStoreBase() {
     socket.onConnect((_) => print('socket connect'));
-    socket.onDisconnect((_) => { users = [], print('socket disconnect') });
-    socket.on('users', (chatUsers) => setChatUsers(chatUsers));
+    socket.onDisconnect((_) => { print('socket disconnect') });
+    socket.on('users', (users) => setUsers(User.fromJsonList(users)));
+    socket.on('typing', (chat) => print('typing'));
     connect();
   }
 
-  IO.Socket socket = IO.io('${Endpoints.socketUrl}chat', IO.OptionBuilder().setTransports(['websocket']).disableAutoConnect().build());
+  @action
+  void connect() {
+    socket.io.options['query'] = { 'user': jsonEncode(appStore.user) };
+    socket.connect();
+  }
 
-  ChatRepository chatRepository = ChatRepository();
-  ChatUserRepository chatUserRepository = ChatUserRepository();
-
-  AppStore appStore = Modular.get<AppStore>();
+  @action
+  void disconnect() {
+    socket.io.options['query'] = { 'user': null };
+    socket.disconnect();
+  }
 
   @observable
   ApiResponse apiResponse = ApiResponse(0, 0, 0, 0, 0, 0, "", "", "", "", "", []);
@@ -53,38 +65,36 @@ abstract class ChatStoreBase with Store {
   bool isFetchError = false;
 
   @observable
-  List<Chat> chats = [];
-
-  @observable
-  List<Chat> groupChats = [];
-  
-  @observable
-  List<User> users = [];
-
-  @observable
-  List<User> chatUsers = [];
+  ObservableList<Chat> chats = ObservableList<Chat>.of([]);
 
   @action
-  void setChatUsers(dynamic newChatUsers) {
-    chatUsers = User.fromJsonList(newChatUsers);
-    print(chatUsers.length);
+  void setChats(List<Chat> newChats) {
+    chats.clear();
+    for (var e in newChats) {
+      chats.add(e);
+    }
   }
 
-  @action
-  void toggle() {
-    chatUsers = User.fromJsonList(jsonDecode(jsonEncode(chatUsers)));
-  }
+  @observable
+  ObservableList<Chat> groupChats = ObservableList<Chat>.of([]);
 
   @action
-  void connect() {
-    socket.io.options['query'] = { 'user': jsonEncode(appStore.user) };
-    socket.connect();
+  void setGroupChats(List<Chat> newGroupChats) {
+    groupChats.clear();
+    for (var e in newGroupChats) {
+      groupChats.add(e);
+    }
   }
 
+  @observable
+  ObservableList<User> users = ObservableList<User>.of([]);
+
   @action
-  void disconnect() {
-    socket.io.options['query'] = { 'user': null };
-    socket.disconnect();
+  void setUsers(List<User> newUsers) {
+    users.clear();
+    for (var e in newUsers) {
+      users.add(e);
+    }
   }
 
   @action
@@ -92,9 +102,11 @@ abstract class ChatStoreBase with Store {
     try {
       isFetchError = false;
       isLoading = true;
-      var c = await chatRepository.list(appStore.user, apiRequest.text);
-      chats = c.where((element) => element.chat_group == null).toList();
-      groupChats = c.where((element) => element.chat_group != null).toList();
+      chats.clear();
+      groupChats.clear();
+      var newChats = await chatRepository.list(appStore.user, apiRequest.text);
+      setChats(newChats.where((element) => element.chat_group == null).toList());
+      setGroupChats(newChats.where((element) => element.chat_group != null).toList());
       isLoading = false;
       return chats;
     } on DioError catch (_) {
@@ -104,3 +116,37 @@ abstract class ChatStoreBase with Store {
     }
   }
 }
+
+
+
+
+/*
+  @action
+  void updateOnlineUsers(User user) {
+    //onlineUsers.where((element) => element.id == user.id).
+  }
+
+  @action deleteOnlineUsers(User user) {
+    onlineUsers.remove(user);
+  }
+*/
+
+ /*
+  @observable
+  bool isTyping = false;
+
+ 
+  @action
+  void chatTyping(Chat chat) {
+
+  }
+
+  @action
+  void setTyping(Chat chat) {
+    if(!isTyping) {
+      isTyping = true;
+      socket.emit('typing', chat);
+      Timer(const Duration(milliseconds: 1200), () => isTyping = false);
+    }
+  }
+  */

@@ -22,7 +22,7 @@ abstract class _AppStoreBase with Store {
   bool isLoading = false;
 
   @observable
-  User user = User(0, "", "", "", "", "", "assets/system/resources/user/img/avatar.png");
+  User user = User(0, "", "", "", "", "", "assets/system/resources/user/img/avatar.png", false);
 
   @action
   Future<void> load() async {

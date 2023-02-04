@@ -53,10 +53,14 @@ class _ReciboPageState extends State<ReciboPage> {
         return true;
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light.copyWith(
+        value: Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light.copyWith(
           statusBarColor: Colors.transparent,
           systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
-          systemNavigationBarIconBrightness: Theme.of(context).brightness == Brightness.dark ? Brightness.light : Brightness.dark
+          systemNavigationBarIconBrightness: Brightness.light
+        ) : SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
+          systemNavigationBarIconBrightness: Brightness.dark
         ),
         child: Observer(
           builder: (context) {

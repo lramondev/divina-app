@@ -89,19 +89,19 @@ mixin _$ChatMessageStore on ChatMessageStoreBase, Store {
     });
   }
 
-  late final _$chatMessageAtom =
-      Atom(name: 'ChatMessageStoreBase.chatMessage', context: context);
+  late final _$chatMessagesAtom =
+      Atom(name: 'ChatMessageStoreBase.chatMessages', context: context);
 
   @override
-  List<ChatMessage> get chatMessage {
-    _$chatMessageAtom.reportRead();
-    return super.chatMessage;
+  ObservableList<ChatMessage> get chatMessages {
+    _$chatMessagesAtom.reportRead();
+    return super.chatMessages;
   }
 
   @override
-  set chatMessage(List<ChatMessage> value) {
-    _$chatMessageAtom.reportWrite(value, super.chatMessage, () {
-      super.chatMessage = value;
+  set chatMessages(ObservableList<ChatMessage> value) {
+    _$chatMessagesAtom.reportWrite(value, super.chatMessages, () {
+      super.chatMessages = value;
     });
   }
 
@@ -113,6 +113,61 @@ mixin _$ChatMessageStore on ChatMessageStoreBase, Store {
     return _$listAsyncAction.run(() => super.list(chat));
   }
 
+  late final _$sendAsyncAction =
+      AsyncAction('ChatMessageStoreBase.send', context: context);
+
+  @override
+  Future<void> send(Chat chat, String message) {
+    return _$sendAsyncAction.run(() => super.send(chat, message));
+  }
+
+  late final _$ChatMessageStoreBaseActionController =
+      ActionController(name: 'ChatMessageStoreBase', context: context);
+
+  @override
+  void connect() {
+    final _$actionInfo = _$ChatMessageStoreBaseActionController.startAction(
+        name: 'ChatMessageStoreBase.connect');
+    try {
+      return super.connect();
+    } finally {
+      _$ChatMessageStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void disconnect() {
+    final _$actionInfo = _$ChatMessageStoreBaseActionController.startAction(
+        name: 'ChatMessageStoreBase.disconnect');
+    try {
+      return super.disconnect();
+    } finally {
+      _$ChatMessageStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setChatMessage(ChatMessage chatMessage) {
+    final _$actionInfo = _$ChatMessageStoreBaseActionController.startAction(
+        name: 'ChatMessageStoreBase.setChatMessage');
+    try {
+      return super.setChatMessage(chatMessage);
+    } finally {
+      _$ChatMessageStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setChatMessages(List<ChatMessage> newChatMessages) {
+    final _$actionInfo = _$ChatMessageStoreBaseActionController.startAction(
+        name: 'ChatMessageStoreBase.setChatMessages');
+    try {
+      return super.setChatMessages(newChatMessages);
+    } finally {
+      _$ChatMessageStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
@@ -121,7 +176,7 @@ apiRequest: ${apiRequest},
 isLoading: ${isLoading},
 isSearching: ${isSearching},
 isFetchError: ${isFetchError},
-chatMessage: ${chatMessage}
+chatMessages: ${chatMessages}
     ''';
   }
 }

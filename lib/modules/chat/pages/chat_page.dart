@@ -29,26 +29,34 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    chatStore.disconnect();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
         return true;
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light.copyWith(
+        value: Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light.copyWith(
           statusBarColor: Colors.transparent,
           systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
-          systemNavigationBarIconBrightness: Theme.of(context).brightness == Brightness.dark ? Brightness.light : Brightness.dark
+          systemNavigationBarIconBrightness: Brightness.light
+        ) : SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
+          systemNavigationBarIconBrightness: Brightness.dark
         ),
         child: Observer(
           builder: (context) {
-            print('observer');
-
             return Scaffold(
               extendBody: true,
               extendBodyBehindAppBar: true,
               floatingActionButton: FloatingActionButton(
-                onPressed: () => chatStore.toggle(),//Modular.to.pushNamed('/chat/user/'),
+                onPressed: () => Modular.to.pushNamed('/chat/user/'),
                 child: const Icon(Icons.add, color: Colors.white),
               ),
               appBar: AppBar(
@@ -78,7 +86,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                       padding: const EdgeInsets.only(top: 16, bottom: 16),
                       child: ListWidget(
                         data: chatStore.chats,
-                        status: (int index) => chatStore.chatUsers.where((element) => element.id == chatStore.chats[index].to?.id).isNotEmpty ? 1 : 0,
+                        status: (int index) => chatStore.users.toList().where((element) => element.id == chatStore.chats[index].to?.id).isNotEmpty ? 1 : 0,
                         leading: (int index) => CachedNetworkImageProvider('${Endpoints.baseUrl}${chatStore.chats[index].to?.avatar_url}'),
                         isLoading: chatStore.isLoading,
                         isFetchError: chatStore.isFetchError,
